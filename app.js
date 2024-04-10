@@ -16,17 +16,18 @@ app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
 app.use((req, res, next) => {
-  console.log('Hello from middleware');
-  next();
-});
-app.use((req, res, next) => {
   req.requestTime = new Date().toString();
   next();
 });
 
-//2)Moutnting Routers
-
+//2)Routes
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
+app.all('*', (req, res, next) => {
+  res.status(404).json({
+    status: 'fail',
+    messsage: `Can't find ${req.originalUrl} on this server`,
+  });
+});
 module.exports = app;
