@@ -21,6 +21,7 @@
     "no-underscore-dangle": "off",
     "class-methods-use-this": "off",
     "prefer-destructuring": "off",
+    "arrow-body-style": "off",
     "no-unused-vars": ["error", { "argsIgnorePattern": "req|res|next|val" }],
     "import/no-extraneous-dependencies": [
       "warn",
