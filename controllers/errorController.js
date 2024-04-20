@@ -17,13 +17,17 @@ const handleValidationErrorDB = (err) => {
   return new AppError(message, 400);
 };
 
+const handleJsonWebTokenError = () =>
+  new AppError('invalid token please log in again', 401);
+const handleTokenExpiredError = () =>
+  new AppError('Your token has expired! please log in again', 401);
 const sendErrorDev = (err, res) => {
   err.statusCode = err.statusCode || 501;
   err.status = err.status || 'error';
   res.status(err.statusCode).json({
     status: err.status,
     error: err,
-    messsage: err.message,
+    message: err.message,
     stack: err.stack,
   });
 };
@@ -31,7 +35,7 @@ const sendErrorProd = (err, res) => {
   if (err.isOperation) {
     res.status(err.statusCode).json({
       status: err.status,
-      messsage: err.message,
+      message: err.message,
     });
   } else {
     console.log('Error 💥', err);
@@ -52,6 +56,8 @@ module.exports = (err, req, res, next) => {
     if (err.name === 'CastError') error = handleCastErrorDB(error);
     if (err.code === 11000) error = handleDublicateFieldsDB(error);
     if (err.name === 'ValidationError') error = handleValidationErrorDB(error);
+    if (err.name === 'JsonWebTokenError') error = handleJsonWebTokenError();
+    if (err.name === 'TokenExpiredError') error = handleTokenExpiredError();
     sendErrorProd(error, res);
   }
 };

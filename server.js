@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION💥 Shetting down...');
-  console.log(err.name, err.message);
+  console.log(err.name, err);
   process.exit(1);
 });
 
-dotenv.config({ path: './config.env' });
+dotenv.config({ path: './.env' });
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
   process.env.DATABASE_PASSWORD,
