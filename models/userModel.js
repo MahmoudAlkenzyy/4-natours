@@ -47,6 +47,11 @@ const userSchema = new Schema({
   passwordChangeAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    select: false,
+    default: true,
+  },
 });
 
 userSchema.pre('save', async function (next) {
