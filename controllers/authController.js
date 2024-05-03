@@ -14,6 +14,14 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
+  const cookisOptions = {
+    expires:
+      Date.now() + process.env.JWT_COOKIES_EXPIRE_IN * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === 'production') cookisOptions.secure = true;
+  res.cookie('jwt', token, cookisOptions);
 
   res.status(statusCode).json({
     status: 'success',
