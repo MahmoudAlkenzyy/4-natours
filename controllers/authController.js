@@ -14,15 +14,16 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
-  const cookisOptions = {
-    expires:
-      Date.now() + process.env.JWT_COOKIES_EXPIRE_IN * 24 * 60 * 60 * 1000,
+  const cookieOptions = {
     httpOnly: true,
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIES_EXPIRE_IN * 24 * 60 * 60 * 1000,
+    ),
   };
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  res.cookie('jwt', token, cookieOptions);
 
-  if (process.env.NODE_ENV === 'production') cookisOptions.secure = true;
-  res.cookie('jwt', token, cookisOptions);
-
+  user.password = undefined;
   res.status(statusCode).json({
     status: 'success',
     token,
@@ -36,9 +37,10 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
-    passwordChangeAt: req.body.passwordChangeAt,
+    // passwordChangeAt: req.body.passwordChangeAt,
     role: req.body.role,
   });
+  console.log(req.body.passwordChangeAt);
   createSendToken(newUser, 201, res);
 });
 
@@ -107,12 +109,13 @@ exports.restrictAt = (...role) => {
 };
 
 exports.forgetPassword = catchAsync(async (req, res, next) => {
-  const user = await User.findOne({ email: req.body.email });
-
   //Get user based on posted email
+
+  const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return next(new AppError('There is no user with that email address'));
   }
+
   //generate the random reset token
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
@@ -173,6 +176,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user.id).select('+password');
 
   //cheack if POSTed password is correct
+  // console.log(req.body.passwordCurrent, user.password);
   if (!(await user.correctPassword(req.body.passwordCurrent, user.password)))
     return next(new AppError('The password was incorrect', 401));
 

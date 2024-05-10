@@ -21,6 +21,7 @@ const handleJsonWebTokenError = () =>
   new AppError('invalid token please log in again', 401);
 const handleTokenExpiredError = () =>
   new AppError('Your token has expired! please log in again', 401);
+
 const sendErrorDev = (err, res) => {
   err.statusCode = err.statusCode || 501;
   err.status = err.status || 'error';
