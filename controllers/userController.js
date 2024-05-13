@@ -47,6 +47,10 @@ exports.addUser = (req, res) => {
     message: 'this route not yet define! please use /signup instead',
   });
 };
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 exports.getAllUsers = getAll(User);
 exports.updateUser = updateOne(User);
 exports.deleteUser = deleteOne(User);
