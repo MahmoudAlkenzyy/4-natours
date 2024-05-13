@@ -1,4 +1,5 @@
 const express = require('express');
+const reviewRouter = require('./reviewRoutes');
 const {
   createTour,
   deleteTour,
@@ -13,6 +14,8 @@ const { protect, restrictAt } = require('../controllers/authController');
 
 const router = express.Router();
 // router.param('id', checkID);
+
+router.use('/:tourId/reviews', reviewRouter);
 
 router.route('/tours-stats').get(getTourStats);
 router.route('/monthly-plan/:year').get(getMonthlyPlan);
