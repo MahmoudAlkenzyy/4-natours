@@ -65,13 +65,14 @@ exports.getAll = (model) =>
       .sort()
       .limitFields()
       .pagenation();
-    const tours = await features.query;
+    // const tours = await features.query.explain();
+    const docs = await features.query;
 
     // SEND RESPONSE
     res.status(200).json({
       status: 'success',
       requested: req.requestTime,
-      results: tours.length,
-      data: { tours },
+      results: docs.length,
+      data: docs,
     });
   });
